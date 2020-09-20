@@ -8,6 +8,7 @@ import com.android.weatherkredily.data.local.DatabaseService
 import com.android.weatherkredily.data.local.entity.CityWeather
 import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
+import com.android.weatherkredily.utils.SortByLocation
 import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
 import com.android.weatherkredily.utils.common.Status
@@ -212,7 +213,10 @@ class CityListViewModel(
                                 .getAllRows()
                                 .subscribeOn(Schedulers.io())
                                 .subscribe({ listOfCities ->
-                                         listOfCitiesWithCurrentWeatherOffline.postValue(Resource.success(listOfCities))
+                                    listOfCities.apply {
+                                       Collections.sort(this,SortByLocation())
+                                    }
+                                    listOfCitiesWithCurrentWeatherOffline.postValue(Resource.success(listOfCities))
                                 }, {
                                     Log.d(TAG,it.message.toString())
                                 })

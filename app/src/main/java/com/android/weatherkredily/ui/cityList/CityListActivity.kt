@@ -11,6 +11,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.android.weatherkredily.R
 import com.android.weatherkredily.WeatherApplication
 import com.android.weatherkredily.base.BaseActivity
