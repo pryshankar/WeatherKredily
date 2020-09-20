@@ -28,7 +28,7 @@ class CityListViewModel(
         const val TAG = "CityListViewModel"
     }
 
-
+    val deletedCityPosition : MutableLiveData<Resource<Int>> = MutableLiveData()
     val loading: MutableLiveData<Boolean> = MutableLiveData()
     val isCityValid : MutableLiveData<Resource<String>> = MutableLiveData()
     val listOfCitiesWithCurrentWeatherOffline: MutableLiveData<Resource<List<CityWeather>>> = MutableLiveData()
@@ -182,6 +182,24 @@ class CityListViewModel(
                 })
         )
     }
+
+
+
+    fun deleteCityFromDatabaseUsingCityId(cityId: Long, itemAdapterPosition : Int) {
+
+        compositeDisposable.add(
+            databaseService.cityWeatherDao().deleteCityUsingCityId(cityId)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    Log.d(TAG, "$it rows deleted")
+                    deletedCityPosition.postValue(Resource.success(itemAdapterPosition))
+                },{
+                    deletedCityPosition.postValue(Resource.error())
+                    Log.d(TAG,it.message.toString())
+                })
+        )
+    }
+
 
 
     private fun loadAllFromDatabase() {

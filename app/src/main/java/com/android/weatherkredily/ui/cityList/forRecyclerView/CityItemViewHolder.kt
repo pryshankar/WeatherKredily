@@ -13,4 +13,5 @@ class CityItemViewHolder (view : View) : RecyclerView.ViewHolder(view) {
     var cityName: TextView = view.findViewById(R.id.cityName)
     var cityTemp: TextView = view.findViewById(R.id.cityTemp)
     var weatherIcon: ImageView = view.findViewById(R.id.weatherIcon)
+    var deleteOrMyLocationIcon : ImageView = view.findViewById(R.id.deleteIconOrMyLocationIcon)
 }

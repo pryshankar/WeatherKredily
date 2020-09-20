@@ -3,7 +3,7 @@ package com.android.weatherkredily
 import android.app.Application
 import androidx.room.Room
 import com.android.weatherkredily.data.local.DatabaseService
-import com.android.weatherkredily.data.local.MIGRATION_3_13
+import com.android.weatherkredily.data.local.MIGRATION_13_14
 import com.android.weatherkredily.data.remote.NetworkService
 import com.android.weatherkredily.data.remote.Networking
 
@@ -30,7 +30,7 @@ class WeatherApplication : Application() {
         this,
         DatabaseService::class.java,
         "weather-database-db"
-    ).addMigrations(MIGRATION_3_13).build()
+    ).addMigrations(MIGRATION_13_14).build()
 
 
 }

@@ -20,6 +20,9 @@ interface CityWeatherDao {
     @Delete
     fun delete(cityWeather: CityWeather): Single<Int>
 
+    @Query("DELETE FROM  cityWeatherTable WHERE cityId = :cityId ")
+    fun deleteCityUsingCityId(cityId: Long): Single<Int>
+
     @Query("DELETE FROM cityWeatherTable")
     fun deleteAll():Single<Int>
 

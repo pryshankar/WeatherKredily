@@ -29,11 +29,38 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
     override fun getItemCount(): Int = cityWeatherList.size
 
     override fun onBindViewHolder(holder: CityItemViewHolder, position: Int) {
-         holder.cityName.text = cityWeatherList[position].cityName
-         holder.cityTemp.text = holder.cityTemp.context.getString(R.string.get_temp_in_degree_celsius,TempUtils.getTempInCelsius(cityWeatherList[position].temperature.toFloat()))
 
-         holder.parentLayout.setOnClickListener {
-             cityItemClickListener.onCityClicked()
+         holder.apply {
+
+             cityName.text = cityWeatherList[position].cityName
+
+             cityTemp.text = holder.cityTemp.context.getString(R.string.get_temp_in_degree_celsius,TempUtils.getTempInCelsius(cityWeatherList[position].temperature.toFloat()))
+
+             parentLayout.setOnClickListener {
+                 cityItemClickListener.onCityClicked(cityWeatherList[adapterPosition].cityId)
+             }
+
+             if(cityWeatherList[position].isNight){
+                 cityName.setTextColor(getWhiteColor(holder.cityName.context))
+                 cityTemp.setTextColor(getWhiteColor(holder.cityName.context))
+                 parentLayout.setBackgroundColor(getNightColor(holder.cityName.context))
+             }else{
+                 cityName.setTextColor(getBlackColor(holder.cityName.context))
+                 cityTemp.setTextColor(getBlackColor(holder.cityName.context))
+                 parentLayout.setBackgroundColor(getDayColor(holder.cityName.context))
+             }
+
+             if(cityWeatherList[position].isCurrentLocation){
+                 deleteOrMyLocationIcon.setImageResource(R.drawable.ic_location_24)
+             }else{
+                 deleteOrMyLocationIcon.setImageResource(R.drawable.ic_delete_24)
+             }
+
+             deleteOrMyLocationIcon.setOnClickListener {
+                 if(!cityWeatherList[adapterPosition].isCurrentLocation)
+                      cityItemClickListener.onDeleteCityClicked(cityWeatherList[adapterPosition].cityId, adapterPosition)
+             }
+
          }
 
 
@@ -67,16 +94,6 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
             }
         }).submit()
 
-
-        if(cityWeatherList[position].isNight){
-            holder.cityName.setTextColor(getWhiteColor(holder.cityName.context))
-            holder.cityTemp.setTextColor(getWhiteColor(holder.cityName.context))
-            holder.parentLayout.setBackgroundColor(getNightColor(holder.cityName.context))
-        }else{
-            holder.cityName.setTextColor(getBlackColor(holder.cityName.context))
-            holder.cityTemp.setTextColor(getBlackColor(holder.cityName.context))
-            holder.parentLayout.setBackgroundColor(getDayColor(holder.cityName.context))
-        }
     }
 
 

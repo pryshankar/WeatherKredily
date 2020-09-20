@@ -200,10 +200,25 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
             }
         })
 
+        viewModel.deletedCityPosition.observe(this, Observer {
+            if(it.status == Status.SUCCESS){
+                it.data?.let { it1 ->
+                    citiesList.removeAt(it1)
+                    cityItemsAdapter.notifyItemRemoved(it1)
+                }
+            }else if(it.status == Status.ERROR){
+                showMessage(getString(R.string.deletion_failed))
+            }
+        })
+
     }
 
-    override fun onCityClicked() {
+    override fun onCityClicked(cityId: Long) {
         //TODO("Not yet implemented")
+    }
+
+    override fun onDeleteCityClicked(cityId: Long, itemAdapterPosition : Int) {
+          viewModel.deleteCityFromDatabaseUsingCityId(cityId, itemAdapterPosition)
     }
 
     private fun downloadIconImage(response : CityCurrentWeatherResponse){
