@@ -14,4 +14,11 @@
     <string name="permission_denied_permanently">Permission has been denied permanently. Go to Permission Settings of App to grant permission manually.</string>
     <string name="permission_denied_temporarily">Permission has been denied. You can not see weather details without granting location permission.</string>
 
+    <string name="enter_city_name">Enter City Name</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="city_already_added">City has already been added.</string>
+    <string name="city_does_not_exist">City does not exist.</string>
+    <string name="something_went_wrong">Something went wrong</string>
+
 </resources>

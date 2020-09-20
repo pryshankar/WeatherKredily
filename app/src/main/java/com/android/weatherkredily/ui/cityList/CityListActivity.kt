@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -22,6 +23,8 @@ import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemsAdapter
 import com.android.weatherkredily.utils.ViewModelProviderFactory
 import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
+import com.android.weatherkredily.utils.common.Status
+import com.android.weatherkredily.utils.common.showAddCityDialog
 import com.android.weatherkredily.utils.network.NetworkHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -32,7 +35,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_city_list.*
 
 
-class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListener {
+class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListener, View.OnClickListener, OnCitySubmitListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var linearLayoutManager : LinearLayoutManager
@@ -47,6 +50,8 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
            cityItemsAdapter = CityItemsAdapter(citiesList,this)
            cityRv.layoutManager = linearLayoutManager
            cityRv.adapter = cityItemsAdapter
+
+           addCityFab.setOnClickListener(this)
 
            getLatitudeAndLongitude()
     }
@@ -168,6 +173,7 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
         viewModel.newCityAdded.observe(this, Observer {
             it.data?.let { it1 -> citiesList.add(it1) }
             cityItemsAdapter.notifyItemInserted(citiesList.size-1)
+            linearLayoutManager.scrollToPosition(citiesList.size-1)
         })
 
         //do not set observer to latitude because latitude is being setValue first.
@@ -179,6 +185,19 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
 
         viewModel.cityToBeUpdated.observe(this, Observer {
             it.data?.let { it1 -> downloadIconImage(it1) }
+        })
+
+        viewModel.isCityValid.observe(this, Observer {
+            if(it.status == Status.ERROR){
+                showMessage(getString(R.string.city_already_added))
+            }else if(it.status == Status.UNKNOWN){
+
+                if(it.data.equals(Constants.CITY_NOT_FOUND)){
+                    showMessage(getString(R.string.city_does_not_exist))
+                }else if(it.data.equals(Constants.SOMETHING_WENT_WRONG)) {
+                    showMessage(getString(R.string.something_went_wrong))
+                }
+            }
         })
 
     }
@@ -203,4 +222,13 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
     }
 
 
+    override fun onClick(view: View?) {
+       if(view?.id == R.id.addCityFab){
+           showAddCityDialog(this,false,this)
+       }
+    }
+
+    override fun onCitySubmit(city: String) {
+        viewModel.loadWeatherForCityByCityName(city)
+    }
 }

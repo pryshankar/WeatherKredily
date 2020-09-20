@@ -8,6 +8,7 @@ import com.android.weatherkredily.data.local.DatabaseService
 import com.android.weatherkredily.data.local.entity.CityWeather
 import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
+import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
 import com.android.weatherkredily.utils.common.Status
 import com.android.weatherkredily.utils.network.NetworkHelper
@@ -122,7 +123,11 @@ class CityListViewModel(
     }
 
 
-    private fun onLoadWeatherForCityName(cityName:String) {
+     fun loadWeatherForCityByCityName(cityName:String) {
+
+         if(!checkInternetConnectionWithMessage()){
+             return
+         }
 
         lateinit var cityCurrentWeatherResponse : CityCurrentWeatherResponse
 
@@ -140,7 +145,7 @@ class CityListViewModel(
                    databaseService.cityWeatherDao().getRowFromCityWeatherTableById(cityCurrentWeatherResponse.cityId)
                        .subscribeOn(Schedulers.io())
                        .subscribe({
-                           isCityValid.value = Resource.error("City already exists")
+                           isCityValid.postValue(Resource.error(Constants.CITY_ALREADY_EXISTS))
                        },{
                            insertCityInDatabase(cityCurrentWeatherResponse,false)
                                .subscribeOn(Schedulers.io())
@@ -150,13 +155,17 @@ class CityListViewModel(
                                    cityToBeUpdated.postValue(Resource.success(cityCurrentWeatherResponse))
                                    loadCityFromDatabaseUsingCityId(cityCurrentWeatherResponse.cityId)
                                },{
-
+                                   Log.d(TAG,it.message.toString())
                                })
                        })
 
                 },
                     {
-                        isCityValid.value = Resource.unknown("Invalid City")
+                        Log.d(TAG,it.message.toString())
+                        if(it.message.toString().contains("404"))
+                           isCityValid.postValue( Resource.unknown(Constants.CITY_NOT_FOUND))
+                        else
+                            isCityValid.postValue( Resource.unknown(Constants.SOMETHING_WENT_WRONG))
                     })
 
         )
