@@ -1,5 +1,6 @@
 package com.android.weatherkredily.ui.cityList.forRecyclerView
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import com.android.weatherkredily.R
 import com.android.weatherkredily.data.local.Converter
 import com.android.weatherkredily.data.local.entity.CityWeather
 import com.android.weatherkredily.utils.common.Constants
+import com.android.weatherkredily.utils.common.TempUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -18,7 +20,7 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
     : RecyclerView.Adapter<CityItemViewHolder>() {
 
 
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityItemViewHolder = CityItemViewHolder(R.layout.item_city,parent)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityItemViewHolder {
        val itemView: View = LayoutInflater.from(parent.context).inflate(R.layout.item_city, parent, false)
        return CityItemViewHolder(itemView)
@@ -28,7 +30,7 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
 
     override fun onBindViewHolder(holder: CityItemViewHolder, position: Int) {
          holder.cityName.text = cityWeatherList[position].cityName
-         holder.cityTemp.text = cityWeatherList[position].temperature
+         holder.cityTemp.text = holder.cityTemp.context.getString(R.string.get_temp_in_degree_celsius,TempUtils.getTempInCelsius(cityWeatherList[position].temperature.toFloat()))
 
          holder.parentLayout.setOnClickListener {
              cityItemClickListener.onCityClicked()
@@ -36,7 +38,9 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
 
 
         val glideRequest = Glide.with(holder.weatherIcon.context)
-            .load(Constants.ICON_URL_PREFIX + cityWeatherList[0].weatherIcon + Constants.ICON_URL_SUFFIX_SMALL_IMAGE)
+            .load(Constants.ICON_URL_PREFIX + cityWeatherList[position].weatherIconUrlPart + Constants.ICON_URL_SUFFIX_LARGE_IMAGE)
+            //.placeholder(R.drawable.ic_image)
+
         glideRequest.into(holder.weatherIcon)
         glideRequest.listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(
@@ -45,8 +49,10 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
                 target: com.bumptech.glide.request.target.Target<Drawable>?,
                 isFirstResource: Boolean
             ): Boolean {
-                //holder.weatherIcon.setImageBitmap(Converter.fromByteArrayToImage(cityWeatherList[position].weatherIcon))
-                Glide.with(holder.weatherIcon.context).load(Converter.fromByteArrayToImage(cityWeatherList[position].weatherIcon)).into(holder.weatherIcon)
+
+                cityWeatherList[position].weatherIcon.let {
+                    holder.weatherIcon.setImageBitmap(Converter.fromByteArrayToImage(it))
+                }
                 return false
             }
 
@@ -60,6 +66,26 @@ class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private v
                 return true
             }
         }).submit()
+
+
+        if(cityWeatherList[position].isNight){
+            holder.cityName.setTextColor(getWhiteColor(holder.cityName.context))
+            holder.cityTemp.setTextColor(getWhiteColor(holder.cityName.context))
+            holder.parentLayout.setBackgroundColor(getNightColor(holder.cityName.context))
+        }else{
+            holder.cityName.setTextColor(getBlackColor(holder.cityName.context))
+            holder.cityTemp.setTextColor(getBlackColor(holder.cityName.context))
+            holder.parentLayout.setBackgroundColor(getDayColor(holder.cityName.context))
+        }
     }
+
+
+    private fun getDayColor(context : Context): Int = context.resources.getColor(R.color.dayColor)
+
+    private fun getNightColor(context : Context): Int = context.resources.getColor(R.color.nightColor)
+
+    private fun getBlackColor(context : Context): Int = context.resources.getColor(R.color.black)
+
+    private fun getWhiteColor(context : Context): Int = context.resources.getColor(R.color.white)
 
 }

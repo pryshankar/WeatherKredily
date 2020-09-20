@@ -12,7 +12,7 @@ import javax.inject.Singleton
             CityWeather::class
         ],
         exportSchema = false,
-        version = 3
+        version = 13
 )
 
 abstract class DatabaseService : RoomDatabase() {

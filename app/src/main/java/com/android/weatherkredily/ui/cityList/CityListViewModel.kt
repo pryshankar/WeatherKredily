@@ -115,6 +115,7 @@ class CityListViewModel(
             temperature = city.main.temperature.toString(),
             isNight = city.weatherList[0].weatherIcon.toLowerCase(Locale.US).contains("n"),
             isCurrentLocation = isCurrentLocation,
+            weatherIconUrlPart = city.weatherList[0].weatherIcon,
             weatherIcon = ByteArray(0)
         )
         return databaseService.cityWeatherDao().insert(cityWeather)
@@ -211,6 +212,7 @@ class CityListViewModel(
             temperature = city.main.temperature.toString(),
             isNight = city.weatherList[0].weatherIcon.toLowerCase(Locale.US).contains("n"),
             isCurrentLocation = isCurrentLocation,
+            weatherIconUrlPart = city.weatherList[0].weatherIcon,
             weatherIcon = byteArray
         )
 

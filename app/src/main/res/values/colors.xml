@@ -11,4 +11,10 @@
     <color name="med_black_txt_color">#454545</color>
     <color name="light_black_txt_color">#757575</color>
 
+
+    <color name="black">#000000</color>
+
+    <color name="nightColor">#003366</color>
+    <color name="dayColor">#ffc400</color>
+
 </resources>

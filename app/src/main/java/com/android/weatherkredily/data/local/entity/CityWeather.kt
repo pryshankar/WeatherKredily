@@ -22,6 +22,9 @@ data class CityWeather(
     @ColumnInfo(name = "isCurrentLocation")
     var isCurrentLocation: Boolean,
 
+    @ColumnInfo(name = "weatherIconUrlPart", defaultValue = "01d")
+    var weatherIconUrlPart: String,
+
     @ColumnInfo(name = "weatherIcon" , typeAffinity = ColumnInfo.BLOB )
     var weatherIcon: ByteArray
 ) {
@@ -36,6 +39,7 @@ data class CityWeather(
         if (temperature != other.temperature) return false
         if (isNight != other.isNight) return false
         if (isCurrentLocation != other.isCurrentLocation) return false
+        if (weatherIconUrlPart != other.weatherIconUrlPart) return false
         if (!weatherIcon.contentEquals(other.weatherIcon)) return false
 
         return true
@@ -47,6 +51,7 @@ data class CityWeather(
         result = 31 * result + temperature.hashCode()
         result = 31 * result + isNight.hashCode()
         result = 31 * result + isCurrentLocation.hashCode()
+        result = 31 * result + weatherIconUrlPart.hashCode()
         result = 31 * result + weatherIcon.contentHashCode()
         return result
     }

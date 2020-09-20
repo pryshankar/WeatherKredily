@@ -192,7 +192,7 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
             .with(applicationContext)
             .asBitmap()
             .load(Constants.ICON_URL_PREFIX + response.weatherList[0].weatherIcon + Constants.ICON_URL_SUFFIX_SMALL_IMAGE)
-            .into(object : SimpleTarget<Bitmap?>(40, 40) {
+            .into(object : SimpleTarget<Bitmap?>(60, 60) {
                 override fun onResourceReady(
                     resource: Bitmap,
                     transition: Transition<in Bitmap?>?

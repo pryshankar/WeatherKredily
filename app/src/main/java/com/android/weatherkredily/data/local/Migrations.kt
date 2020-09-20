@@ -4,10 +4,17 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-val MIGRATION_2_3 = object : Migration(2, 3) {
+val MIGRATION_3_13 = object : Migration(3, 13) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
 
+        val defaultValue = "\'01d\'"
+
+        val sqlQuery = "ALTER TABLE cityWeatherTable ADD COLUMN weatherIconUrlPart TEXT " +
+                               "DEFAULT " + defaultValue + " NOT NULL"
+
+        //database.execSQL("ALTER TABLE cityWeatherTable ADD COLUMN weatherIconUrlPart TEXT  NOT NULL")
+        database.execSQL(sqlQuery)
     }
 
 
