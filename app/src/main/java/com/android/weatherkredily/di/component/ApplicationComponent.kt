@@ -8,6 +8,7 @@ import com.android.weatherkredily.data.remote.NetworkService
 import com.android.weatherkredily.di.ApplicationContext
 import com.android.weatherkredily.di.module.ApplicationModule
 import com.android.weatherkredily.utils.network.NetworkHelper
+import com.android.weatherkredily.utils.rx.SchedulerProvider
 import dagger.Component
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Singleton
@@ -31,5 +32,7 @@ interface ApplicationComponent{
     fun getNetworkHelper(): NetworkHelper
 
     fun getCompositeDisposable(): CompositeDisposable
+
+    fun getSchedulerProvider(): SchedulerProvider
 
 }

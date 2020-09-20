@@ -12,5 +12,4 @@ import dagger.Component
 )
 interface ActivityComponent {
     fun inject(activity: CityListActivity)
-
 }

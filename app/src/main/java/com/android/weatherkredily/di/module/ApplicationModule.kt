@@ -11,6 +11,8 @@ import com.android.weatherkredily.data.remote.NetworkService
 import com.android.weatherkredily.data.remote.Networking
 import com.android.weatherkredily.di.ApplicationContext
 import com.android.weatherkredily.utils.network.NetworkHelper
+import com.android.weatherkredily.utils.rx.RxSchedulerProvider
+import com.android.weatherkredily.utils.rx.SchedulerProvider
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -52,5 +54,9 @@ class ApplicationModule(private val application : WeatherApplication) {
     @Singleton
     @Provides
     fun provideNetworkHelper(): NetworkHelper = NetworkHelper(application)
+
+
+    @Provides
+    fun provideSchedulerProvider(): SchedulerProvider = RxSchedulerProvider()
 
 }

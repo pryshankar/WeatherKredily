@@ -14,17 +14,18 @@ import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
 import com.android.weatherkredily.utils.common.Status
 import com.android.weatherkredily.utils.network.NetworkHelper
+import com.android.weatherkredily.utils.rx.SchedulerProvider
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 class CityListViewModel(
+    schedulerProvider: SchedulerProvider,
     compositeDisposable: CompositeDisposable,
     networkHelper: NetworkHelper,
-     val weatherRepository: WeatherRepository,
-     val databaseService: DatabaseService
-) : BaseViewModel(compositeDisposable, networkHelper) {
+    val weatherRepository: WeatherRepository,
+    val databaseService: DatabaseService
+) : BaseViewModel(schedulerProvider,compositeDisposable, networkHelper) {
 
     companion object {
         const val TAG = "CityListViewModel"
@@ -69,7 +70,7 @@ class CityListViewModel(
                 .map{
                     cityHourlyForecastResponse = it
                 }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
                     Log.d(TAG,it.toString())
                 },{
@@ -93,17 +94,17 @@ class CityListViewModel(
                     cityCurrentWeatherResponse = it
                     //return@flatMap weatherRepository.fetchWeatherIcon(it.weatherList[0].weatherIcon)
                 }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
 
                     updateCityInDatabase(true,ByteArray(0),cityCurrentWeatherResponse)
-                        .subscribeOn(Schedulers.io())
+                        .subscribeOn(schedulerProvider.io())
                         .subscribe({
                             Log.d(TAG, "$it rows updated")
 
                             if(it==0){
                                 insertCityInDatabase(cityCurrentWeatherResponse,true)
-                                    .subscribeOn(Schedulers.io())
+                                    .subscribeOn(schedulerProvider.io())
                                     .subscribe({
                                         Log.d(TAG, "$it is cityId for the row which got inserted")
                                         cityToBeUpdated.postValue(Resource.success(cityCurrentWeatherResponse))
@@ -164,16 +165,16 @@ class CityListViewModel(
                     cityCurrentWeatherResponse = it
                     //return@flatMap weatherRepository.fetchWeatherIcon(it.weatherList[0].weatherIcon)
                 }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
 
                    databaseService.cityWeatherDao().getRowFromCityWeatherTableById(cityCurrentWeatherResponse.cityId)
-                       .subscribeOn(Schedulers.io())
+                       .subscribeOn(schedulerProvider.io())
                        .subscribe({
                            isCityValid.postValue(Resource.error(Constants.CITY_ALREADY_EXISTS))
                        },{
                            insertCityInDatabase(cityCurrentWeatherResponse,false)
-                               .subscribeOn(Schedulers.io())
+                               .subscribeOn(schedulerProvider.io())
                                .subscribe({
                                    Log.d(TAG,"Inserting in database Successful")
                                    //this will help download icon image using url inside CityListActivity
@@ -199,7 +200,7 @@ class CityListViewModel(
     private fun loadCityFromDatabaseUsingCityId(cityId: Long) {
         compositeDisposable.add(
             databaseService.cityWeatherDao().getRowFromCityWeatherTableById(cityId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
                     newCityAdded.postValue(Resource.success(it))
                 },{
@@ -214,7 +215,7 @@ class CityListViewModel(
 
         compositeDisposable.add(
             databaseService.cityWeatherDao().deleteCityUsingCityId(cityId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
                     Log.d(TAG, "$it rows deleted")
                     deletedCityPosition.postValue(Resource.success(itemAdapterPosition))
@@ -235,7 +236,7 @@ class CityListViewModel(
                         compositeDisposable.add(
                             databaseService.cityWeatherDao()
                                 .getAllRows()
-                                .subscribeOn(Schedulers.io())
+                                .subscribeOn(schedulerProvider.io())
                                 .subscribe({ listOfCities ->
                                     listOfCities.apply {
                                        Collections.sort(this,SortByLocation())
@@ -247,7 +248,7 @@ class CityListViewModel(
                         )
                     }
                 }
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe(
                     {
 
@@ -280,7 +281,7 @@ class CityListViewModel(
 
         compositeDisposable.add(
             databaseService.cityWeatherDao().updateIcon(byteArray,cityId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(schedulerProvider.io())
                 .subscribe({
                     Log.d(TAG, "$it rows updated")
                 },{

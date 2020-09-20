@@ -12,6 +12,7 @@ import com.android.weatherkredily.ui.cityList.CityListViewModel
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemClickListener
 import com.android.weatherkredily.utils.ViewModelProviderFactory
 import com.android.weatherkredily.utils.network.NetworkHelper
+import com.android.weatherkredily.utils.rx.SchedulerProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Module
@@ -23,13 +24,14 @@ class ActivityModule(private val activity : BaseActivity<*>) {
 
      @Provides
      fun provideCityListViewModel(
+         schedulerProvider: SchedulerProvider,
          compositeDisposable: CompositeDisposable,
          networkHelper: NetworkHelper,
          weatherRepository: WeatherRepository,
          databaseService: DatabaseService
      ):CityListViewModel  = ViewModelProviders.of(
     activity, ViewModelProviderFactory(CityListViewModel::class) {
-        CityListViewModel(compositeDisposable,networkHelper, weatherRepository,databaseService  )
+        CityListViewModel(schedulerProvider,compositeDisposable,networkHelper, weatherRepository,databaseService  )
     }).get(CityListViewModel::class.java)
 
 
@@ -46,6 +48,5 @@ class ActivityModule(private val activity : BaseActivity<*>) {
 
     @Provides
     fun provideCityItemClickListener() : CityItemClickListener = activity as CityListActivity
-
 
 }

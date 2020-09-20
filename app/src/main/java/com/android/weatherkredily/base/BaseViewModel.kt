@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import com.android.weatherkredily.R
 import com.android.weatherkredily.utils.common.Resource
 import com.android.weatherkredily.utils.network.NetworkHelper
+import com.android.weatherkredily.utils.rx.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
 
 abstract class BaseViewModel(
+    val schedulerProvider: SchedulerProvider,
     val compositeDisposable: CompositeDisposable,
     val networkHelper: NetworkHelper
 
