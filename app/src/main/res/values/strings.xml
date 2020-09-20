@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">WeatherKredily</string>
+
+    <string name="network_connection_error">No Internet Connection</string>
+
+    <string name="degree_centigrade">°C</string>
+
+    <string name="get_temp_in_degree_celsius">%1$s °C</string>
+
+    <string name="location_unavailable">Location not available.</string>
+
+    <string name="location_available">Location available now.</string>
+
+    <string name="permission_denied_permanently">Permission has been denied permanently. Go to Permission Settings of App to grant permission manually.</string>
+    <string name="permission_denied_temporarily">Permission has been denied. You can not see weather details without granting location permission.</string>
+
+</resources>
