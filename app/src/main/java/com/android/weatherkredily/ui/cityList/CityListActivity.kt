@@ -9,64 +9,52 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.android.weatherkredily.R
-import com.android.weatherkredily.WeatherApplication
 import com.android.weatherkredily.base.BaseActivity
 import com.android.weatherkredily.data.local.Converter
 import com.android.weatherkredily.data.local.entity.CityWeather
-import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
+import com.android.weatherkredily.di.component.ActivityComponent
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemClickListener
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemsAdapter
-import com.android.weatherkredily.utils.ViewModelProviderFactory
 import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
 import com.android.weatherkredily.utils.common.Status
 import com.android.weatherkredily.utils.common.showAddCityDialog
-import com.android.weatherkredily.utils.network.NetworkHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_city_list.*
+import javax.inject.Inject
 
 
 class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListener, View.OnClickListener, OnCitySubmitListener {
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var linearLayoutManager : LinearLayoutManager
-    private lateinit var cityItemsAdapter: CityItemsAdapter
-    private var citiesList : ArrayList<CityWeather> = ArrayList()
+     @Inject
+     lateinit var fusedLocationClient: FusedLocationProviderClient
+
+     @Inject
+     lateinit var linearLayoutManager : LinearLayoutManager
+
+     @Inject
+     lateinit var cityItemsAdapter: CityItemsAdapter
+
+     @Inject
+     lateinit var citiesList : ArrayList<CityWeather>
 
     override fun provideLayoutId(): Int  = R.layout.activity_city_list
 
     override fun setupView(savedInstanceState: Bundle?) {
 
-           linearLayoutManager = LinearLayoutManager(this)
-           cityItemsAdapter = CityItemsAdapter(citiesList,this)
-           cityRv.layoutManager = linearLayoutManager
-           cityRv.adapter = cityItemsAdapter
+        cityRv.layoutManager = linearLayoutManager
+        cityRv.adapter = cityItemsAdapter
 
-           addCityFab.setOnClickListener(this)
+        addCityFab.setOnClickListener(this)
 
-           getLatitudeAndLongitude()
+        getLatitudeAndLongitude()
     }
-
-    override fun provideViewModel(): CityListViewModel = ViewModelProviders.of(
-        this, ViewModelProviderFactory(CityListViewModel::class) {
-            CityListViewModel(
-                CompositeDisposable(), NetworkHelper(application),
-                WeatherRepository((application as WeatherApplication).networkService),
-                (application as WeatherApplication).databaseService
-            )
-        }).get(CityListViewModel::class.java)
-
 
 
     private fun getLatitudeAndLongitude() {
@@ -84,7 +72,6 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
             return
         }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
@@ -162,7 +149,7 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
 
         viewModel.loading.observe(this, Observer {
             if (it) {
-                 //TODO("Not yet implemented")
+                //TODO("Not yet implemented")
             }
         })
 
@@ -220,7 +207,7 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
     }
 
     override fun onDeleteCityClicked(cityId: Long, itemAdapterPosition : Int) {
-          viewModel.deleteCityFromDatabaseUsingCityId(cityId, itemAdapterPosition)
+        viewModel.deleteCityFromDatabaseUsingCityId(cityId, itemAdapterPosition)
     }
 
     private fun downloadIconImage(response : CityCurrentWeatherResponse){
@@ -233,19 +220,32 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
                     resource: Bitmap,
                     transition: Transition<in Bitmap?>?
                 ) {
-                      viewModel.updateIconOfCityWeatherInDb(response.cityId,Converter.fromImageToByteArray(resource))
+                    viewModel.updateIconOfCityWeatherInDb(response.cityId,Converter.fromImageToByteArray(resource))
                 }
             })
     }
 
 
     override fun onClick(view: View?) {
-       if(view?.id == R.id.addCityFab){
-           showAddCityDialog(this,false,this)
-       }
+        if(view?.id == R.id.addCityFab){
+            showAddCityDialog(this,false,this)
+        }
     }
 
     override fun onCitySubmit(city: String) {
         viewModel.loadWeatherForCityByCityName(city)
     }
+
+    override fun injectDependencies(activityComponent: ActivityComponent) {
+        activityComponent.inject(this)
+    }
 }
+
+
+
+
+
+
+
+
+

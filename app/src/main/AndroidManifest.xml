@@ -16,8 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.cityHourlyForecast.CityHourlyForecastActivity"></activity>
 
+        <activity android:name=".ui.cityHourlyForecast.CityHourlyForecastActivity" />
         <activity android:name=".ui.cityList.CityListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

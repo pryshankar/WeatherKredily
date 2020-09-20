@@ -8,6 +8,7 @@ import com.android.weatherkredily.data.local.DatabaseService
 import com.android.weatherkredily.data.local.entity.CityWeather
 import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
+import com.android.weatherkredily.data.remote.response.CityHourlyForecastResponse
 import com.android.weatherkredily.utils.SortByLocation
 import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
@@ -21,8 +22,8 @@ import java.util.*
 class CityListViewModel(
     compositeDisposable: CompositeDisposable,
     networkHelper: NetworkHelper,
-    private val weatherRepository: WeatherRepository,
-    private val databaseService: DatabaseService
+     val weatherRepository: WeatherRepository,
+     val databaseService: DatabaseService
 ) : BaseViewModel(compositeDisposable, networkHelper) {
 
     companion object {
@@ -41,6 +42,7 @@ class CityListViewModel(
 
 
     override fun onCreate() {
+        //testHourlyForecast(1276300)
     }
 
 
@@ -53,6 +55,28 @@ class CityListViewModel(
         } else {
             loadAllFromDatabase()
         }
+    }
+
+
+
+    private fun testHourlyForecast(cityId:Long){
+
+        lateinit var cityHourlyForecastResponse : CityHourlyForecastResponse
+
+        compositeDisposable.add(
+
+            weatherRepository.fetchCityHourlyForecast(cityId)
+                .map{
+                    cityHourlyForecastResponse = it
+                }
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    Log.d(TAG,it.toString())
+                },{
+                    Log.d(TAG,it.message.toString())
+                })
+
+        )
     }
 
 

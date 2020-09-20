@@ -4,10 +4,10 @@ import com.android.weatherkredily.data.remote.NetworkService
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
 import com.android.weatherkredily.data.remote.response.CityHourlyForecastResponse
 import io.reactivex.Single
+import javax.inject.Inject
 
-class WeatherRepository constructor(
-    private val networkService: NetworkService
-
+class WeatherRepository @Inject constructor(
+     val networkService: NetworkService
 ) {
 
     fun fetchCurrentLocationWeather(latitude: String?, longitude: String?): Single<CityCurrentWeatherResponse> {
@@ -31,7 +31,7 @@ class WeatherRepository constructor(
     }
 
 
-    fun fetchCityHourlyForecast(id: String?): Single<CityHourlyForecastResponse> {
+    fun fetchCityHourlyForecast(id: Long?): Single<CityHourlyForecastResponse> {
         return networkService.doGetCityHourlyForecastApiCall(
             id
         )

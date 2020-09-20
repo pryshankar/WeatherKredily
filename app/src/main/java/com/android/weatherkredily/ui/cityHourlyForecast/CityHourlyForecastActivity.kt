@@ -3,6 +3,7 @@ package com.android.weatherkredily.ui.cityHourlyForecast
 
 import android.os.Bundle
 import com.android.weatherkredily.base.BaseActivity
+import com.android.weatherkredily.di.component.ActivityComponent
 
 class CityHourlyForecastActivity : BaseActivity<CityHourlyForecastViewModel>() {
 
@@ -15,7 +16,9 @@ class CityHourlyForecastActivity : BaseActivity<CityHourlyForecastViewModel>() {
         TODO("Not yet implemented")
     }
 
-    override fun provideViewModel(): CityHourlyForecastViewModel {
+    override fun injectDependencies(activityComponent: ActivityComponent) {
         TODO("Not yet implemented")
     }
+
+
 }

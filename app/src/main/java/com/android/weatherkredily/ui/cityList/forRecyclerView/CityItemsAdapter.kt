@@ -15,10 +15,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import javax.inject.Inject
 
-class CityItemsAdapter(private val cityWeatherList: List<CityWeather>, private val cityItemClickListener: CityItemClickListener)
+class CityItemsAdapter  @Inject constructor( private val cityWeatherList: ArrayList<CityWeather>,  private val cityItemClickListener: CityItemClickListener)
     : RecyclerView.Adapter<CityItemViewHolder>() {
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityItemViewHolder {

@@ -6,22 +6,34 @@ import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
+import com.android.weatherkredily.WeatherApplication
+import com.android.weatherkredily.di.component.ActivityComponent
+import com.android.weatherkredily.di.component.DaggerActivityComponent
+import com.android.weatherkredily.di.module.ActivityModule
+import javax.inject.Inject
+
 
 abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
+    @Inject
     lateinit var viewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies(buildActivityComponent())
         super.onCreate(savedInstanceState)
         setContentView(provideLayoutId())
-        setupView(savedInstanceState)
-
-        viewModel = provideViewModel()
-
-        viewModel.onCreate()
-
         setupObservers()
+        setupView(savedInstanceState)
+        viewModel.onCreate()
     }
+
+
+    private fun buildActivityComponent() =
+        DaggerActivityComponent
+            .builder()
+            .applicationComponent((application as WeatherApplication).applicationComponent)
+            .activityModule(ActivityModule(this))
+            .build()
 
 
     protected open fun setupObservers() {
@@ -47,6 +59,6 @@ abstract class BaseActivity<VM : BaseViewModel> : AppCompatActivity() {
 
     protected abstract fun setupView(savedInstanceState: Bundle?)
 
-    protected abstract fun provideViewModel() : VM
+    protected abstract fun injectDependencies(activityComponent: ActivityComponent)
 
 }

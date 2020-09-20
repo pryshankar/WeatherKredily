@@ -38,7 +38,7 @@ interface NetworkService {
     @GET(Endpoints.HOURLY_FORECAST)
     fun doGetCityHourlyForecastApiCall(
 
-        @Query("id") cityId: String?,
+        @Query("id") cityId: Long?,
         @Query(Networking.API_KEY) apiKey: String = Networking.API_KEY_VALUE
     ): Single<CityHourlyForecastResponse>
 
