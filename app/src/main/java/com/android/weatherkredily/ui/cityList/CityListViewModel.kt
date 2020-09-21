@@ -46,6 +46,8 @@ class CityListViewModel(
         if (checkInternetConnectionWithMessage()) {
             if (isLatAndLongValid()) {
                 onLoadWeatherForCurrentLocation()
+            }else{
+                loadAllFromDatabase()
             }
 
         } else {
