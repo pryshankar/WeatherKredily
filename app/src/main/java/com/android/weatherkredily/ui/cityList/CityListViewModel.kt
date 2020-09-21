@@ -1,6 +1,5 @@
 package com.android.weatherkredily.ui.cityList
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.android.weatherkredily.R
 import com.android.weatherkredily.base.BaseViewModel
@@ -16,6 +15,7 @@ import com.android.weatherkredily.utils.network.NetworkHelper
 import com.android.weatherkredily.utils.rx.SchedulerProvider
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
+import timber.log.Timber
 import java.util.*
 
 class CityListViewModel(
@@ -72,18 +72,19 @@ class CityListViewModel(
                     updateCityInDatabase(true,ByteArray(0),cityCurrentWeatherResponse)
                         .subscribeOn(schedulerProvider.io())
                         .subscribe({
-                            Log.d(TAG, "$it rows updated")
+
+                            Timber.d("$it rows updated")
 
                             if(it==0){
                                 insertCityInDatabase(cityCurrentWeatherResponse,true)
                                     .subscribeOn(schedulerProvider.io())
                                     .subscribe({
-                                        Log.d(TAG, "$it is cityId for the row which got inserted")
+                                        Timber.d("$it is cityId for the row which got inserted")
                                         cityToBeUpdated.postValue(Resource.success(cityCurrentWeatherResponse))
                                         loadAllFromDatabase()
                                     },{
                                         loading.postValue(false)
-                                        Log.d(TAG,it.message.toString())
+                                        Timber.d(it.message.toString())
                                     })
                             }else{
                                 //this will help download icon image using url inside CityListActivity
@@ -93,13 +94,13 @@ class CityListViewModel(
 
                         },{
                             loading.postValue(false)
-                            Log.d(TAG,it.message.toString())
+                            Timber.d(it.message.toString())
                         })
 
                 },
                     {
                         loading.postValue(false)
-                        Log.d(TAG,it.message.toString())
+                        Timber.d(it.message.toString())
                     })
 
         )
@@ -144,18 +145,18 @@ class CityListViewModel(
                            insertCityInDatabase(cityCurrentWeatherResponse,false)
                                .subscribeOn(schedulerProvider.io())
                                .subscribe({
-                                   Log.d(TAG,"Inserting in database Successful")
+                                   Timber.d("Inserting in database Successful")
                                    //this will help download icon image using url inside CityListActivity
                                    cityToBeUpdated.postValue(Resource.success(cityCurrentWeatherResponse))
                                    loadCityFromDatabaseUsingCityId(cityCurrentWeatherResponse.cityId)
                                },{
-                                   Log.d(TAG,it.message.toString())
+                                   Timber.d(it.message.toString())
                                })
                        })
 
                 },
                     {
-                        Log.d(TAG,it.message.toString())
+                        Timber.d(it.message.toString())
                         if(it.message.toString().contains("404"))
                            isCityValid.postValue( Resource.unknown(Constants.CITY_NOT_FOUND))
                         else
@@ -172,7 +173,7 @@ class CityListViewModel(
                 .subscribe({
                     newCityAdded.postValue(Resource.success(it))
                 },{
-                    Log.d(TAG,it.message.toString())
+                    Timber.d(it.message.toString())
                 })
         )
     }
@@ -185,18 +186,18 @@ class CityListViewModel(
             databaseService.cityWeatherDao().deleteCityUsingCityId(cityId)
                 .subscribeOn(schedulerProvider.io())
                 .subscribe({
-                    Log.d(TAG, "$it rows deleted")
+                    Timber.d( "$it rows deleted")
                     deletedCityPosition.postValue(Resource.success(itemAdapterPosition))
                 },{
                     deletedCityPosition.postValue(Resource.error())
-                    Log.d(TAG,it.message.toString())
+                    Timber.d(it.message.toString())
                 })
         )
     }
 
 
 
-    private fun loadAllFromDatabase() {
+    fun loadAllFromDatabase() {
 
         loading.postValue(true)
 
@@ -216,9 +217,12 @@ class CityListViewModel(
                                     listOfCitiesWithCurrentWeatherOffline.postValue(Resource.success(listOfCities))
                                 }, {
                                     loading.postValue(false)
-                                    Log.d(TAG,it.message.toString())
+                                    Timber.d(it.message.toString())
                                 })
                         )
+                    }else{
+                        loading.postValue(false)
+                        listOfCitiesWithCurrentWeatherOffline.postValue(Resource.error())
                     }
                 }
                 .subscribeOn(schedulerProvider.io())
@@ -227,7 +231,7 @@ class CityListViewModel(
 
                     }, {
                         loading.postValue(false)
-                        Log.d(TAG,it.message.toString())
+                        Timber.d(it.message.toString())
                     }
                 )
         )
@@ -257,9 +261,9 @@ class CityListViewModel(
             databaseService.cityWeatherDao().updateIcon(byteArray,cityId)
                 .subscribeOn(schedulerProvider.io())
                 .subscribe({
-                    Log.d(TAG, "$it rows updated")
+                    Timber.d( "$it rows updated")
                 },{
-                    Log.d(TAG,it.message.toString())
+                    Timber.d(it.message.toString())
                 })
         )
     }

@@ -19,20 +19,6 @@ class WeatherApplication : Application() {
         injectDependencies()
     }
 
-
-    private fun provideNetworkService(): NetworkService =
-        Networking.create(
-            BuildConfig.BASE_URL
-        )
-
-
-    private fun provideDatabaseService(): DatabaseService = Room.databaseBuilder(
-        this,
-        DatabaseService::class.java,
-        "weather-database-db"
-    ).addMigrations(MIGRATION_13_14).build()
-
-
     private fun injectDependencies() {
         applicationComponent = DaggerApplicationComponent
             .builder()

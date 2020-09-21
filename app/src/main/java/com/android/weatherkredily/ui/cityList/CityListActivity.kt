@@ -136,6 +136,8 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
                         // Permission Denied for Marshmallow and lower devices
                         showMessage(R.string.permission_denied_temporarily)
                     }
+
+                    viewModel.loadAllFromDatabase()
                 }
                 return
             }
@@ -156,9 +158,16 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
         })
 
         viewModel.listOfCitiesWithCurrentWeatherOffline.observe(this, Observer {
-            citiesList.clear()
-            it.data?.let { it1 -> citiesList.addAll(it1) }
-            cityItemsAdapter.notifyDataSetChanged()
+
+
+            if(it.status==Status.SUCCESS){
+                citiesList.clear()
+                it.data?.let { it1 -> citiesList.addAll(it1) }
+                cityItemsAdapter.notifyDataSetChanged()
+            }else{
+                showMessage(getString(R.string.no_data_found))
+            }
+
         })
 
         viewModel.newCityAdded.observe(this, Observer {
