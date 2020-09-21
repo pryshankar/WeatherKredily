@@ -34,10 +34,10 @@ class CityItemsAdapter  @Inject constructor( private val cityWeatherList: ArrayL
 
              cityName.text = cityWeatherList[position].cityName
 
-             cityTemp.text = holder.cityTemp.context.getString(R.string.get_temp_in_degree_celsius,TempUtils.getTempInCelsius(cityWeatherList[position].temperature.toFloat()))
+             cityTemp.text = cityTemp.context.getString(R.string.get_temp_in_degree_celsius,TempUtils.getTempInCelsius(cityWeatherList[position].temperature.toFloat()))
 
              parentLayout.setOnClickListener {
-                 cityItemClickListener.onCityClicked(cityWeatherList[adapterPosition].cityId)
+                 cityItemClickListener.onCityClicked(cityWeatherList[adapterPosition].cityId, cityWeatherList[adapterPosition].cityName)
              }
 
              if(cityWeatherList[position].isNight){

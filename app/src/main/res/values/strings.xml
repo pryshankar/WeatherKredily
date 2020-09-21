@@ -21,5 +21,6 @@
     <string name="city_does_not_exist">City does not exist.</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="deletion_failed">Deletion Failed</string>
+    <string name="cityDetails">cityDetails</string>
 
 </resources>

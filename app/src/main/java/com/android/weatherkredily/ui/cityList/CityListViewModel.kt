@@ -8,7 +8,6 @@ import com.android.weatherkredily.data.local.DatabaseService
 import com.android.weatherkredily.data.local.entity.CityWeather
 import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
-import com.android.weatherkredily.data.remote.response.CityHourlyForecastResponse
 import com.android.weatherkredily.utils.SortByLocation
 import com.android.weatherkredily.utils.common.Constants
 import com.android.weatherkredily.utils.common.Resource
@@ -41,11 +40,7 @@ class CityListViewModel(
 
     val cityToBeUpdated : MutableLiveData<Resource<CityCurrentWeatherResponse>> = MutableLiveData()
 
-
-    override fun onCreate() {
-        //testHourlyForecast(1276300)
-    }
-
+    override fun onCreate() {}
 
     fun loadCurrentWeather() {
         if (checkInternetConnectionWithMessage()) {
@@ -57,29 +52,6 @@ class CityListViewModel(
             loadAllFromDatabase()
         }
     }
-
-
-
-    private fun testHourlyForecast(cityId:Long){
-
-        lateinit var cityHourlyForecastResponse : CityHourlyForecastResponse
-
-        compositeDisposable.add(
-
-            weatherRepository.fetchCityHourlyForecast(cityId)
-                .map{
-                    cityHourlyForecastResponse = it
-                }
-                .subscribeOn(schedulerProvider.io())
-                .subscribe({
-                    Log.d(TAG,it.toString())
-                },{
-                    Log.d(TAG,it.message.toString())
-                })
-
-        )
-    }
-
 
 
     private fun onLoadWeatherForCurrentLocation() {
@@ -110,6 +82,7 @@ class CityListViewModel(
                                         cityToBeUpdated.postValue(Resource.success(cityCurrentWeatherResponse))
                                         loadAllFromDatabase()
                                     },{
+                                        loading.postValue(false)
                                         Log.d(TAG,it.message.toString())
                                     })
                             }else{
@@ -119,21 +92,18 @@ class CityListViewModel(
                             }
 
                         },{
+                            loading.postValue(false)
                             Log.d(TAG,it.message.toString())
                         })
 
                 },
                     {
+                        loading.postValue(false)
                         Log.d(TAG,it.message.toString())
                     })
 
         )
     }
-
-
-
-
-
 
 
     private fun insertCityInDatabase(city : CityCurrentWeatherResponse, isCurrentLocation : Boolean) : Single<Long> {
@@ -156,8 +126,6 @@ class CityListViewModel(
          }
 
         lateinit var cityCurrentWeatherResponse : CityCurrentWeatherResponse
-
-        loading.postValue(true)
 
         compositeDisposable.add(
             weatherRepository.fetchCityWeatherByName(cityName)
@@ -229,6 +197,9 @@ class CityListViewModel(
 
 
     private fun loadAllFromDatabase() {
+
+        loading.postValue(true)
+
         compositeDisposable.add(
             databaseService.cityWeatherDao().count()
                 .map {
@@ -241,8 +212,10 @@ class CityListViewModel(
                                     listOfCities.apply {
                                        Collections.sort(this,SortByLocation())
                                     }
+                                    loading.postValue(false)
                                     listOfCitiesWithCurrentWeatherOffline.postValue(Resource.success(listOfCities))
                                 }, {
+                                    loading.postValue(false)
                                     Log.d(TAG,it.message.toString())
                                 })
                         )
@@ -253,6 +226,7 @@ class CityListViewModel(
                     {
 
                     }, {
+                        loading.postValue(false)
                         Log.d(TAG,it.message.toString())
                     }
                 )

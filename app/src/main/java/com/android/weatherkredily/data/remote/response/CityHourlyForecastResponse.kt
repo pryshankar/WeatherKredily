@@ -1,24 +1,17 @@
 package com.android.weatherkredily.data.remote.response
 
-import com.android.weatherkredily.data.model.Main
-import com.android.weatherkredily.data.model.Weather
+import com.android.weatherkredily.data.model.City
+import com.android.weatherkredily.data.model.HourlyForecast
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class CityHourlyForecastResponse(
     @Expose
-    @SerializedName("weather")
-    var weatherList: List<Weather>,
+    @SerializedName("list")
+    var hourlyForecastList: List<HourlyForecast>,
 
     @Expose
-    @SerializedName("main")
-    var main: Main,
+    @SerializedName("city")
+    var city: City
 
-    @Expose
-    @SerializedName("dt")
-    var time: Long,
-
-    @Expose
-    @SerializedName("name")
-    var nameOfCity: String
 )

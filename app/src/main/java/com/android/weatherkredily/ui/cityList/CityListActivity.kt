@@ -1,6 +1,7 @@
 package com.android.weatherkredily.ui.cityList
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
@@ -14,8 +15,10 @@ import com.android.weatherkredily.R
 import com.android.weatherkredily.base.BaseActivity
 import com.android.weatherkredily.data.local.Converter
 import com.android.weatherkredily.data.local.entity.CityWeather
+import com.android.weatherkredily.data.model.City
 import com.android.weatherkredily.data.remote.response.CityCurrentWeatherResponse
 import com.android.weatherkredily.di.component.ActivityComponent
+import com.android.weatherkredily.ui.cityHourlyForecast.CityHourlyForecastActivity
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemClickListener
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemsAdapter
 import com.android.weatherkredily.utils.common.Constants
@@ -27,6 +30,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.android.synthetic.main.activity_city_list.*
+import kotlinx.android.synthetic.main.activity_city_list.loadingPb
 import javax.inject.Inject
 
 
@@ -148,9 +152,7 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
         super.setupObservers()
 
         viewModel.loading.observe(this, Observer {
-            if (it) {
-                //TODO("Not yet implemented")
-            }
+            loadingPb.visibility = if (it) View.VISIBLE else View.GONE
         })
 
         viewModel.listOfCitiesWithCurrentWeatherOffline.observe(this, Observer {
@@ -202,8 +204,10 @@ class CityListActivity : BaseActivity<CityListViewModel>() , CityItemClickListen
 
     }
 
-    override fun onCityClicked(cityId: Long) {
-        //TODO("Not yet implemented")
+    override fun onCityClicked(cityId: Long, cityName : String) {
+        val intent = Intent(this, CityHourlyForecastActivity::class.java)
+        intent.putExtra(getString(R.string.cityDetails), City(cityId, cityName))
+        startActivity(intent)
     }
 
     override fun onDeleteCityClicked(cityId: Long, itemAdapterPosition : Int) {

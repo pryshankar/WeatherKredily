@@ -28,4 +28,17 @@
         app:srcCompat="@drawable/ic_add_24" />
 
 
+
+    <ProgressBar
+        android:id="@+id/loadingPb"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

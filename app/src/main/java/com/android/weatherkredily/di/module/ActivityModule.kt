@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.weatherkredily.base.BaseActivity
 import com.android.weatherkredily.data.local.DatabaseService
 import com.android.weatherkredily.data.local.entity.CityWeather
+import com.android.weatherkredily.data.model.HourlyForecast
 import com.android.weatherkredily.data.remote.repository.WeatherRepository
 import com.android.weatherkredily.di.ActivityScope
+import com.android.weatherkredily.ui.cityHourlyForecast.CityHourlyForecastViewModel
 import com.android.weatherkredily.ui.cityList.CityListActivity
 import com.android.weatherkredily.ui.cityList.CityListViewModel
 import com.android.weatherkredily.ui.cityList.forRecyclerView.CityItemClickListener
@@ -35,6 +37,20 @@ class ActivityModule(private val activity : BaseActivity<*>) {
     }).get(CityListViewModel::class.java)
 
 
+
+    @Provides
+    fun provideCityHourlyForecastViewModel(
+        schedulerProvider: SchedulerProvider,
+        compositeDisposable: CompositeDisposable,
+        networkHelper: NetworkHelper,
+        weatherRepository: WeatherRepository
+    ):CityHourlyForecastViewModel  = ViewModelProviders.of(
+        activity, ViewModelProviderFactory(CityHourlyForecastViewModel::class) {
+            CityHourlyForecastViewModel(schedulerProvider,compositeDisposable,networkHelper, weatherRepository  )
+        }).get(CityHourlyForecastViewModel::class.java)
+
+
+
     @Provides
     fun provideFusedLocationProviderClient() : FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
 
@@ -45,6 +61,11 @@ class ActivityModule(private val activity : BaseActivity<*>) {
     @ActivityScope
     @Provides
     fun provideCityWeatherArrayList() : ArrayList<CityWeather> = ArrayList()
+
+    @ActivityScope
+    @Provides
+    fun provideHourlyForecastArrayList() : ArrayList<HourlyForecast> = ArrayList()
+
 
     @Provides
     fun provideCityItemClickListener() : CityItemClickListener = activity as CityListActivity
